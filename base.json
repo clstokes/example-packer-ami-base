@@ -31,6 +31,14 @@
         "files": ["artifice.txt"]
       },
       {
+        "type":          "atlas",
+        "artifact":      "clstokes/{{user `atlas_name`}}",
+        "artifact_type": "amazon.image",
+        "metadata": {
+          "created_at":  "{{timestamp}}"
+        }
+      },
+      {
         "type":   "shell-local",
         "inline": [
           "curl -X POST -d \"atlas_name={{user `atlas_name`}}\" http://requestb.in/1aztit81"
