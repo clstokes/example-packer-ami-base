@@ -1,8 +1,9 @@
 {
   "variables": {
-    "region":     "us-east-1",
-    "source_ami": "ami-9a562df2",
-    "atlas_name": "{{ env `ATLAS_BUILD_NAME` }}"
+    "region":             "us-east-1",
+    "source_ami":         "ami-9a562df2",
+    "atlas_name":         "{{ env `ATLAS_BUILD_NAME` }}",
+    "notification_token": "{{ env `ATLAS_TOKEN_NOTIFICATION` }}"
   },
   "builders": [
     {
@@ -16,6 +17,10 @@
   ],
   "provisioners": [
     {
+      "type": "shell-local",
+      "command": "env | sort"
+    },
+    {
       "type":            "shell",
       "execute_command": "{{ .Vars }} sudo -E sh '{{ .Path }}'",
       "inline": [
@@ -27,21 +32,23 @@
   "post-processors": [
     [
       {
-        "type":  "artifice",
-        "files": ["artifice.txt"]
-      },
-      {
         "type":          "atlas",
         "artifact":      "clstokes/{{user `atlas_name`}}",
         "artifact_type": "amazon.image",
         "metadata": {
           "created_at":  "{{timestamp}}"
         }
+      }
+    ],
+    [
+      {
+        "type":  "artifice",
+        "files": ["artifice.txt"]
       },
       {
         "type":   "shell-local",
         "inline": [
-          "curl -X POST -d \"atlas_name={{user `atlas_name`}}\" http://requestb.in/1aztit81"
+          "curl https://atlas.hashicorp.com/api/v1/packer/build-configurations/clstokes/bakery-tomcat7/build -X POST -d '' -H 'X-Atlas-Token: {{user `notification_token`}}'"
         ]
       }
     ]
