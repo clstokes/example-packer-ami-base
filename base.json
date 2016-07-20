@@ -3,7 +3,8 @@
     "region":             "us-east-1",
     "source_ami":         "ami-9a562df2",
     "atlas_name":         "{{ env `ATLAS_BUILD_NAME` }}",
-    "notification_token": "{{ env `ATLAS_TOKEN_NOTIFICATION` }}"
+    "notification_token": "{{ env `ATLAS_TOKEN_NOTIFICATION` }}",
+    "git_sha":            "{{ env `ATLAS_BUILD_GITHUB_COMMIT_SHA` }}"
   },
   "builders": [
     {
@@ -12,7 +13,10 @@
       "source_ami":    "{{user `source_ami`}}",
       "instance_type": "t2.small",
       "ssh_username":  "ubuntu",
-      "ami_name":      "{{user `atlas_name`}}-{{isotime \"2006-01-02T15-04-05\"}}"
+      "ami_name":      "{{user `atlas_name`}}-{{isotime \"2006-01-02T15-04-05\"}}",
+      "tags": {
+        "git_sha":  "{{user `git_sha`}}"
+      }
     }
   ],
   "provisioners": [
